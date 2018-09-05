@@ -20,6 +20,8 @@ namespace Baicao.Models
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
+        public DbSet<Consumer> Consumers { get; set; }
+        public DbSet<SmsCode> SmsCodes { get; set; }
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
         {
