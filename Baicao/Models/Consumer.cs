@@ -23,6 +23,12 @@ namespace Baicao.Models
         public DateTime Updatetime { get; set; }
         [MaxLength(32)]
         public string Userip { get; set; }
+        [MaxLength(10)]
+        public string Dadacode
+        {
+            get;
+            set;
+        }
 
     }
 }

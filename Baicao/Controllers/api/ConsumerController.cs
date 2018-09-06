@@ -88,10 +88,16 @@ namespace Baicao.Controllers.api
             rlt.Code = 200;
             rlt.Msg = "注册成功";
             rlt.Passed = true;
+            //todo Couponcode和Dadacode需要保持数据库唯一
             rlt.Dadacode = GenerateRndCode(6);
-            rlt.Dadacode = GenerateRndCode(7);
+            rlt.Couponcode = GenerateRndCode(7);
 
-            //todo 存储到数据库
+            csm.Couponcode = rlt.Couponcode;
+            csm.Dadacode = rlt.Dadacode;
+            csm.Mobilephone = dto.Mobiphone;
+            csm.Userip = System.Web.HttpContext.Current.Request.UserHostAddress;
+            csm.Regdate = DateTime.Now;
+            _context.SaveChanges();
 
             return Ok(rlt);
         }
