@@ -230,6 +230,10 @@
     <Compile Include="Startup.cs" />
     <Compile Include="Models\dto\KeyDto.cs" />
     <Compile Include="Models\dto\ConsumerInfoResult.cs" />
+    <Compile Include="Models\dto\matchdto.cs" />
+    <Compile Include="Models\Invition.cs" />
+    <Compile Include="Models\dto\MatchlistResult.cs" />
+    <Compile Include="Models\WxUserInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />

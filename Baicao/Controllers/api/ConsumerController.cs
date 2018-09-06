@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Web.Http;
 using Baicao.Models;
 using Baicao.Models.dto;
+using System.Data.Entity;
 
 namespace Baicao.Controllers.api
 {
@@ -115,6 +116,62 @@ namespace Baicao.Controllers.api
             rlt.Code = 200;
             rlt.Couponcode = csm.Couponcode;
             rlt.Dadacode = csm.Dadacode;
+            return Ok(rlt);
+        }
+
+        [HttpPost, Route("api/consumer/match")]
+        public IHttpActionResult Match(matchdto dto) {
+            ApiResult rlt = new ApiResult();
+            var csm = _context.Consumers.Single(c => c.Openid == dto.openid);
+            var otherCsm = _context.Consumers.SingleOrDefault(c => c.Dadacode == dto.dadacode);
+            if(otherCsm == null) {
+                rlt.Code = 400;
+                rlt.Msg = "拼搭失败 - 拼搭码未找到";
+                return Ok(rlt);
+            }
+
+            var invition = _context.Invitions.FirstOrDefault(c => c.Invopenid == dto.openid && c.Invopenid == otherCsm.Openid);
+            if(invition != null) {
+                rlt.Code = 401;
+                rlt.Msg = "重复拼搭";
+                return Ok(rlt);
+            }
+            Random rnd = new Random();
+            invition = new Invition()
+            {
+                Consumeropenid = dto.openid,
+                Invopenid = otherCsm.Openid,
+                Iftmall = true,
+                MatchType = rnd.Next(0, 6)
+            };
+            _context.Invitions.Add(invition);
+            _context.SaveChanges();
+            rlt.Code = 200;
+            rlt.Msg = "拼搭成功";
+            return Ok(rlt);
+        }
+
+        [HttpPost, Route("api/consumer/matchlist")]
+        public IHttpActionResult MatchList(matchdto dto)
+        {
+            var list = _context.Invitions.Include(c => c.Consumer).Include(c => c.Inv)
+                     .Where(c => c.ConsumerOpenid == dto.openid || c.InvOpenid == dto.openid).OrderByDescending(c => c.Id)
+                               .Select(c => new UserInfoSimple
+                               {
+                                   Nickname = (c.ConsumerOpenid == dto.openid) ? c.Inv.NickName : c.Consumer.NickName,
+                                   HeadImgUrl = (c.ConsumerOpenid == dto.openid) ? c.Inv.HeadImgUrl : c.Consumer.HeadImgUrl,
+                                   InvitionType = (c.ConsumerOpenid == dto.openid) ? "host" : "client",
+                                   Invdate = c.Invdate,
+                                   MatchType = c.MatchType
+
+                               }
+                                      ).ToList();
+
+            var rlt = new MatchlistResult();
+            rlt.Code = 200;
+            rlt.Msg = "";
+            rlt.List = list;
+
             return Ok(rlt);
         }
 

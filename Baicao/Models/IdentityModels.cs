@@ -22,6 +22,8 @@ namespace Baicao.Models
     {
         public DbSet<Consumer> Consumers { get; set; }
         public DbSet<SmsCode> SmsCodes { get; set; }
+        public DbSet<Invition> Invitions { get; set; }
+        public DbSet<WxUserInfo> WxUserInfos { get; set; }
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
         {
