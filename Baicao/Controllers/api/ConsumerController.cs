@@ -130,7 +130,7 @@ namespace Baicao.Controllers.api
                 return Ok(rlt);
             }
 
-            var invition = _context.Invitions.FirstOrDefault(c => c.Invopenid == dto.openid && c.Invopenid == otherCsm.Openid);
+            var invition = _context.Invitions.FirstOrDefault(c => c.InvOpenid == dto.openid && c.InvOpenid == otherCsm.Openid);
             if(invition != null) {
                 rlt.Code = 401;
                 rlt.Msg = "重复拼搭";
@@ -139,8 +139,8 @@ namespace Baicao.Controllers.api
             Random rnd = new Random();
             invition = new Invition()
             {
-                Consumeropenid = dto.openid,
-                Invopenid = otherCsm.Openid,
+                ConsumerOpenid = dto.openid,
+                InvOpenid = otherCsm.Openid,
                 Iftmall = true,
                 MatchType = rnd.Next(0, 6)
             };
@@ -165,7 +165,7 @@ namespace Baicao.Controllers.api
                                    MatchType = c.MatchType
 
                                }
-                                      ).ToList();
+                                      ).Take(50).ToList();
 
             var rlt = new MatchlistResult();
             rlt.Code = 200;
