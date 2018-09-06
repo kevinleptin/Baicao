@@ -45,5 +45,11 @@ namespace Baicao.Models
         /// 发送状态，用于存储短信服务器返回的值
         /// </summary>
         public int State { get; set; }
+
+        public bool IsUsed
+        {
+            get;
+            set;
+        }
     }
 }

@@ -55,12 +55,51 @@ namespace Baicao.Controllers.api
             return Ok(rlt);
         }
 
+        [HttpPost, Route("api/consumer/join")]
         public IHttpActionResult Join(VerifyPhoneDto dto)
         {
             VerifyPhoneResult rlt = new VerifyPhoneResult();
-            //TODO: 验证dto
+            if(string.IsNullOrEmpty(dto.Openid)) {
+                rlt.Code = 400;
+                rlt.Msg = "数据格式错误";
+                return Ok(rlt);
+            }
+
+            var smsCode = _context.SmsCodes.LastOrDefault(c => c.Mobiphone == dto.Mobiphone && c.IsUsed == false);
+            if(smsCode == null) {
+                rlt.Code = 401;
+                rlt.Msg = "错误：短信验证码未获取";
+                return Ok(rlt);
+            }
+
+            if(smsCode.PlainCode != dto.VerifyCode) {
+                rlt.Code = 400;
+                rlt.Msg = "短信验证码错误";
+                return Ok(rlt);
+            }
+
+            var csm = _context.Consumers.FirstOrDefault(c => c.Openid == dto.Openid);
+            if(!string.IsNullOrEmpty(csm.Mobilephone)) {
+                rlt.Code = 402;
+                rlt.Msg = "重复参与";
+                return Ok(rlt);
+            }
+
+            rlt.Code = 200;
+            rlt.Msg = "注册成功";
+            rlt.Passed = true;
+            rlt.Dadacode = GenerateRndCode(6);
+            rlt.Dadacode = GenerateRndCode(7);
+
+            //todo 存储到数据库
 
             return Ok(rlt);
+        }
+
+        private string GenerateRndCode(int length)
+        {
+            string rnd = Guid.NewGuid().ToString().Replace("-","").Substring(0, length);
+            return rnd;
         }
     }
 }
