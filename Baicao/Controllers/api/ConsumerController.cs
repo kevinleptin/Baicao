@@ -102,6 +102,22 @@ namespace Baicao.Controllers.api
             return Ok(rlt);
         }
 
+        [HttpPost, Route("api/consumer/info")]
+        public IHttpActionResult Info(KeyDto dto) {
+            ConsumerInfoResult rlt = new ConsumerInfoResult();
+            var csm = _context.Consumers.FirstOrDefault(c => c.Openid == dto.Openid);
+            if(csm == null) {
+                rlt.Code = 404;
+                rlt.Msg = "没有数据";
+                return Ok(rlt);
+            }
+
+            rlt.Code = 200;
+            rlt.Couponcode = csm.Couponcode;
+            rlt.Dadacode = csm.Dadacode;
+            return Ok(rlt);
+        }
+
         private string GenerateRndCode(int length)
         {
             string rnd = Guid.NewGuid().ToString().Replace("-","").Substring(0, length);
