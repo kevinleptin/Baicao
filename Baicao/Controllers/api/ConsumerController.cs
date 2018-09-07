@@ -36,15 +36,6 @@ namespace Baicao.Controllers.api
                 rlt.Code = 200;
                 rlt.IsJoined = false;
                 rlt.Msg = "用户还未验证手机号码";
-
-                if (consumer == null)
-                {
-                    consumer = new Consumer();
-                    consumer.Openid = dto.Openid;
-                    consumer.Userip = System.Web.HttpContext.Current.Request.UserHostAddress;
-                    _context.Consumers.Add(consumer);
-                    _context.SaveChanges();
-                }
             }
             else
             {
@@ -54,6 +45,54 @@ namespace Baicao.Controllers.api
             }
 
             return Ok(rlt);
+        }
+
+        [HttpPost, Route("api/consumer/userauth")]
+        public IHttpActionResult UserAuth(WxUserInfoDto dto)
+        {
+            IsJoinedResult rlt = new IsJoinedResult();
+            var wxUserInfo = _context.WxUserInfos.FirstOrDefault(c => c.Openid == dto.OpenId);
+            if (wxUserInfo == null)
+            {
+                using (var trans = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        wxUserInfo = new WxUserInfo();
+                        wxUserInfo.Openid = dto.OpenId;
+                        wxUserInfo.HeadImgUrl = dto.HeadImgUrl;
+                        wxUserInfo.NickName = dto.NickName;
+
+                        var consumer = new Consumer();
+                        consumer.Openid = dto.OpenId;
+
+                        _context.Consumers.Add(consumer);
+                        // var consumerInfo = _context.Consumers.FirstOrDefault(c=>c.Openid)
+
+                        _context.WxUserInfos.Add(wxUserInfo);
+                        _context.SaveChanges();
+
+                        trans.Commit();
+                    }
+                    catch
+                    {
+                        trans.Rollback();
+                    }
+                }
+            }
+            else
+            {
+                var consumer = _context.Consumers.First(c => c.Openid == dto.OpenId);
+                if (!string.IsNullOrEmpty(consumer.Mobilephone))
+                {
+                    rlt.Code = 200;
+                    rlt.IsJoined = true;
+                    rlt.Msg = "用户已验证手机号码";
+                }
+            }
+
+            return Ok(rlt);
+
         }
 
         [HttpPost, Route("api/consumer/join")]

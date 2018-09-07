@@ -7,6 +7,7 @@ namespace Baicao.Models
     {
         public WxUserInfo()
         {
+            CreateOn = DateTime.Now;
         }
 
         [Key]

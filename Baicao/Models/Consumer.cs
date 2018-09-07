@@ -12,6 +12,10 @@ namespace Baicao.Models
         {
             Updatetime = DateTime.Now;
             Regdate = DateTime.MinValue;
+            if (HttpContext.Current != null)
+            {
+                Userip = HttpContext.Current.Request.UserHostAddress;
+            }
         }
         [Key]
         public string Openid { get; set; }

@@ -215,6 +215,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201809070145238_init2.cs" />
+    <Compile Include="Migrations\201809070145238_init2.Designer.cs">
+      <DependentUpon>201809070145238_init2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Consumer.cs" />
@@ -224,6 +228,7 @@
     <Compile Include="Models\dto\VerifyPhoneDto.cs" />
     <Compile Include="Models\dto\VerifyPhoneResult.cs" />
     <Compile Include="Models\dto\WxOpenIdObj.cs" />
+    <Compile Include="Models\dto\WxUserInfoDto.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\SmsCode.cs" />
@@ -312,6 +317,11 @@
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.3.1.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201809070145238_init2.resx">
+      <DependentUpon>201809070145238_init2.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
