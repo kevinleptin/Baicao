@@ -11,7 +11,7 @@ namespace Baicao.Models
         public Consumer()
         {
             Updatetime = DateTime.Now;
-            Regdate = DateTime.MinValue;
+            Regdate = DateTime.Now;
             if (HttpContext.Current != null)
             {
                 Userip = HttpContext.Current.Request.UserHostAddress;

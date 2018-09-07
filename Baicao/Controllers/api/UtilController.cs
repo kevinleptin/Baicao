@@ -19,6 +19,7 @@ namespace Baicao.Controllers.api
             _context = new ApplicationDbContext();
         }
 
+        [HttpPost, Route("api/util/sendsms")]
         public IHttpActionResult sendSmsCode(SmsCodeDto dto)
         {
             Random rnd =new Random();

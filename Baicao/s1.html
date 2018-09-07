@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="/Scripts/jquery-3.3.1.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="input-group">
+            <span class="input-group-addon" id="basic-addon1">手机号码</span>
+            <input type="text" id="txtPhoneNumber" class="form-control" placeholder="Phone Number" aria-describedby="basic-addon1">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-8">
+            <input type="text" id="txtVerifyCode" class="form-control" placeholder="请输入验证码"/>
+        </div>
+        <div class="col-xs-4">
+            <button class="btn btn-sm btn-success" id="btnGetVerifyCode">获取验证码</button>
+        </div>
+    </div>
+    <div class="row">
+        <button id="btnSubmit" class="btn btn-primary">确认</button>
+    </div>
+</div>
+<script>
+    $('#btnGetVerifyCode').click(function () {
+        var vm = {
+            openid: 'mytestopenid',
+            mobiphone: $('#txtPhoneNumber').val()
+        }
+        $.post({
+            url: '/api/util/sendsms',
+            data: vm,
+            success: function(result) {
+                console.log(result.data);
+            }
+        });
+    });
+
+    $('#btnSubmit').click(function() {
+        var vm = {
+            openid: 'mytestopenid',
+            mobiphone: $('#txtPhoneNumber').val(),
+            verifyCode: $('#txtVerifyCode').val()
+        };
+        $.post({
+            url: '/api/consumer/join',
+            data: vm,
+            success: function(result) {
+                console.log(result.data);
+            }
+        });
+    });
+</script>    
+</body >
+</html>

@@ -74,7 +74,7 @@ namespace Baicao.Controllers.api
 
                         trans.Commit();
                     }
-                    catch
+                    catch(Exception e)
                     {
                         trans.Rollback();
                     }
@@ -99,27 +99,40 @@ namespace Baicao.Controllers.api
         public IHttpActionResult Join(VerifyPhoneDto dto)
         {
             VerifyPhoneResult rlt = new VerifyPhoneResult();
-            if(string.IsNullOrEmpty(dto.Openid)) {
+            if (string.IsNullOrEmpty(dto.Openid))
+            {
                 rlt.Code = 400;
                 rlt.Msg = "数据格式错误";
                 return Ok(rlt);
             }
 
-            var smsCode = _context.SmsCodes.LastOrDefault(c => c.Mobiphone == dto.Mobiphone && c.IsUsed == false);
-            if(smsCode == null) {
+            var smsCode = _context.SmsCodes.OrderByDescending(c => c.Id)
+                .FirstOrDefault(c => c.Mobiphone == dto.Mobiphone && c.IsUsed == false);
+            if (smsCode == null)
+            {
                 rlt.Code = 401;
                 rlt.Msg = "错误：短信验证码未获取";
                 return Ok(rlt);
             }
 
-            if(smsCode.PlainCode != dto.VerifyCode) {
-                rlt.Code = 400;
+            var ts = DateTime.Now - smsCode.CreateOn;
+            if (ts.TotalMinutes >= 5)
+            {
+                rlt.Code = 403;
+                rlt.Msg = "验证码已超时";
+                return Ok(rlt);
+            }
+
+            if (smsCode.PlainCode != dto.VerifyCode)
+            {
+                rlt.Code = 404;
                 rlt.Msg = "短信验证码错误";
                 return Ok(rlt);
             }
 
             var csm = _context.Consumers.FirstOrDefault(c => c.Openid == dto.Openid);
-            if(!string.IsNullOrEmpty(csm.Mobilephone)) {
+            if (!string.IsNullOrEmpty(csm.Mobilephone))
+            {
                 rlt.Code = 402;
                 rlt.Msg = "重复参与";
                 return Ok(rlt);
@@ -137,6 +150,7 @@ namespace Baicao.Controllers.api
             csm.Mobilephone = dto.Mobiphone;
             csm.Userip = System.Web.HttpContext.Current.Request.UserHostAddress;
             csm.Regdate = DateTime.Now;
+            smsCode.IsUsed = true;
             _context.SaveChanges();
 
             return Ok(rlt);
