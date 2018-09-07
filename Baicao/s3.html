@@ -13,28 +13,44 @@
 
 </head>
 <body>
-<!-- TODO: ASSUMPTION : all the a/b/c parameter is acquired, when paged loaded then #1, post open_id, #2, post_userinfo. -->
 <div class="container">
     <div class="row">
-        <a href="/s1.html" class="btn btn-primary">免费领取</a>
-
+        你的搭搭码 <span id="hostDadaCode">获取中...</span>
+    </div>
+    <div class="row">
+        <input id="dadacode" class="form-control" placeholder="请输入朋友的搭搭码" />
+    </div>
+    <div class="row">
+        <button class="btn btn-primary btn-sm" id="btnMatch">搭在一起</button>
+    </div>
+    <div class="row">
+        <a href="/slist.html" class="btn btn-success btn-sm" id="btnCheckSucceedMatch">查看成功搭配</a>
     </div>
 </div>
 <script>
-    $(document).ready(function () {
+    var openId = 'mytestopenid';
+    $('#btnMatch').click(function () {
         var vm = {
-            openId: "mytestopenid",
-            nickName: "nico",
-            headImgUrl: "there"
+            openId: openId,
+            dadacode: $('#dadacode').val()
         };
-
         $.post({
-            url: '/api/consumer/userauth',
+            url: '/api/consumer/match',
             data: vm,
-            success: function(result) {
-                if (result.isJoined) {
-                    window.location.replace("http://localhost:55397/s2.html");
-                }
+            success: function(data) {
+                console.log(data);
+            }
+        });
+    });
+
+    $(document).ready(function() {
+        $.post({
+            url: '/api/consumer/info',
+            data: {
+                openId: openId
+            },
+            success: function(data) {
+                $('#hostDadaCode').text(data.dadacode);
             }
         });
     });

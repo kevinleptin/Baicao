@@ -183,7 +183,7 @@ namespace Baicao.Controllers.api
                 return Ok(rlt);
             }
 
-            var invition = _context.Invitions.FirstOrDefault(c => c.InvOpenid == dto.openid && c.InvOpenid == otherCsm.Openid);
+            var invition = _context.Invitions.FirstOrDefault(c => c.ConsumerOpenid == dto.openid && c.InvOpenid == otherCsm.Openid);
             if(invition != null) {
                 rlt.Code = 401;
                 rlt.Msg = "重复拼搭";

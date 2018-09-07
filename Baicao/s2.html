@@ -39,9 +39,9 @@
             url: '/api/consumer/info',
             data: vm,
             success: function (data) {
-                console.log(data.Dadacode);
-                $('#dadacode').text(data.Dadacode);
-                new QRCode(document.getElementById("qrcode"), hostUrl+"/Ticket/Redem?couponcode="+data.Couponcode);
+                $('#dadacode').text(data.dadacode);
+                new QRCode(document.getElementById("qrcode"),
+                    hostUrl + "/Ticket/Redem?couponcode=" + data.couponcode);
             }
         });
     });

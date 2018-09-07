@@ -13,31 +13,19 @@
 
 </head>
 <body>
-<!-- TODO: ASSUMPTION : all the a/b/c parameter is acquired, when paged loaded then #1, post open_id, #2, post_userinfo. -->
-<div class="container">
-    <div class="row">
-        <a href="/s1.html" class="btn btn-primary">免费领取</a>
 
-    </div>
-</div>
+</body>
+
 <script>
-    $(document).ready(function () {
-        var vm = {
-            openId: "mytestopenid",
-            nickName: "nico",
-            headImgUrl: "there"
-        };
-
+    $(function() {
+        var vm = { openid: 'mytestopenid' };
         $.post({
-            url: '/api/consumer/userauth',
+            url: '/api/consumer/matchlist',
             data: vm,
-            success: function(result) {
-                if (result.isJoined) {
-                    window.location.replace("http://localhost:55397/s2.html");
-                }
+            success: function(data) {
+                console.log(data);
             }
         });
     });
 </script>
-</body>
 </html>
