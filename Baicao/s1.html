@@ -35,7 +35,7 @@
 <script>
     $('#btnGetVerifyCode').click(function () {
         var vm = {
-            openid: 'mytestopenid',
+            openid: 'mytestopenid1',
             mobiphone: $('#txtPhoneNumber').val()
         }
         $.post({
@@ -49,7 +49,7 @@
 
     $('#btnSubmit').click(function() {
         var vm = {
-            openid: 'mytestopenid',
+            openid: 'mytestopenid1',
             mobiphone: $('#txtPhoneNumber').val(),
             verifyCode: $('#txtVerifyCode').val()
         };

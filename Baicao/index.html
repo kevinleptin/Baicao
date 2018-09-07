@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     <!-- Latest compiled and minified JavaScript -->
     <script src="/Scripts/jquery-3.3.1.js"></script>
+    <script src="/Scripts/js.cookie-2.2.0.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 </head>
@@ -17,23 +18,32 @@
 <div class="container">
     <div class="row">
         <a href="/s1.html" class="btn btn-primary">免费领取</a>
-
     </div>
 </div>
 <script>
     $(document).ready(function () {
         var vm = {
-            openId: "mytestopenid",
+            openId: "mytestopenid1",
             nickName: "nico",
             headImgUrl: "there"
         };
 
+        var url = new URL(document.URL);
+        var from = url.searchParams.get("from");
+        if (from) {
+            Cookies.set("sharefrom", from);
+            console.log(Cookies.get("sharefrom"));
+        }
         $.post({
             url: '/api/consumer/userauth',
             data: vm,
             success: function(result) {
                 if (result.isJoined) {
-                    window.location.replace("http://localhost:55397/s2.html");
+                    if (from) {
+                        window.location.replace("http://localhost:55397/s3.html");
+                    } else {
+                        window.location.replace("http://localhost:55397/s2.html");
+                    }
                 }
             }
         });
