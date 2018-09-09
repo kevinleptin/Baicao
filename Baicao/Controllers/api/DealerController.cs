@@ -30,6 +30,7 @@ namespace Baicao.Controllers.api
             string couponCode = dto.Couponcode;
 
             var rlt = new RedemResult();
+            rlt.CouponCode = dto.Couponcode;
             var redem = _context.Redems.FirstOrDefault(c => c.CouponCode == couponCode);
             if (redem != null)
             {
@@ -63,6 +64,10 @@ namespace Baicao.Controllers.api
             _context.SaveChanges();
 
             rlt.Code = 200;
+            rlt.RedemDate = redem.RedemDate;
+            rlt.RedemPerson = redem.RedemPerson;
+            rlt.RedemProduct = redem.RedemProduct;
+            rlt.RedemSource = redem.RedemSource;
             rlt.Msg = "核销成功";
             return Ok(rlt);
         }
