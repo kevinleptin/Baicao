@@ -220,6 +220,10 @@
     <Compile Include="Migrations\201809070145238_init2.Designer.cs">
       <DependentUpon>201809070145238_init2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201809090231131_redem.cs" />
+    <Compile Include="Migrations\201809090231131_redem.Designer.cs">
+      <DependentUpon>201809090231131_redem.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Consumer.cs" />
@@ -332,6 +336,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201809070145238_init2.resx">
       <DependentUpon>201809070145238_init2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201809090231131_redem.resx">
+      <DependentUpon>201809090231131_redem.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

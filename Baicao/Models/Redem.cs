@@ -14,6 +14,7 @@ namespace Baicao.Models
             UpdateTime = DateTime.Now;
         }
         [MaxLength(16)]
+        [Key]
         public string CouponCode { get; set; }
         public DateTime RedemDate { get; set; }
         [MaxLength(32)]
