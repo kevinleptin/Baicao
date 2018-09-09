@@ -209,6 +209,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\api\ConsumerController.cs" />
+    <Compile Include="Controllers\api\DealerController.cs" />
     <Compile Include="Controllers\api\UtilController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -222,8 +223,11 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Consumer.cs" />
+    <Compile Include="Models\Dealer.cs" />
     <Compile Include="Models\dto\ApiResult.cs" />
     <Compile Include="Models\dto\IsJoinedResult.cs" />
+    <Compile Include="Models\dto\RedemDto.cs" />
+    <Compile Include="Models\dto\RedemResult.cs" />
     <Compile Include="Models\dto\SmsCodeDto.cs" />
     <Compile Include="Models\dto\VerifyPhoneDto.cs" />
     <Compile Include="Models\dto\VerifyPhoneResult.cs" />
@@ -231,6 +235,7 @@
     <Compile Include="Models\dto\WxUserInfoDto.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\Redem.cs" />
     <Compile Include="Models\SmsCode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
