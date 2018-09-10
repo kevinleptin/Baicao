@@ -138,19 +138,26 @@ namespace Baicao.Controllers.api
                 return Ok(rlt);
             }
 
-            rlt.Code = 200;
-            rlt.Msg = "注册成功";
-            rlt.Passed = true;
-            //todo Couponcode和Dadacode需要保持数据库唯一
-            rlt.Dadacode = GenerateRndCode(6);
-            rlt.Couponcode = GenerateRndCode(7);
-
-            csm.Couponcode = rlt.Couponcode;
-            csm.Dadacode = rlt.Dadacode;
+            
             csm.Mobilephone = dto.Mobiphone;
             csm.Userip = System.Web.HttpContext.Current.Request.UserHostAddress;
             csm.Regdate = DateTime.Now;
             smsCode.IsUsed = true;
+            _context.SaveChanges();
+
+            rlt.Code = 200;
+            rlt.Msg = "注册成功";
+            rlt.Passed = true;
+            string dadaCode = string.Empty;
+            string couponCode = string.Empty;
+
+            var couponCodeEntity = _context.CouponCodes.Find(csm.CodeId);
+            var dadaCodeEntity = _context.DadaCodes.Find(csm.CodeId);
+            rlt.Dadacode = dadaCodeEntity.Code;
+            rlt.Couponcode = couponCodeEntity.Code;
+
+            csm.Dadacode = rlt.Dadacode;
+            csm.Couponcode = rlt.Couponcode;
             _context.SaveChanges();
 
             return Ok(rlt);

@@ -26,6 +26,8 @@ namespace Baicao.Models
         public DbSet<WxUserInfo> WxUserInfos { get; set; }
         public DbSet<Redem> Redems { get; set; }
         public DbSet<Dealer> Dealers { get; set; }
+        public DbSet<CouponCode> CouponCodes { get; set; }
+        public DbSet<DadaCode> DadaCodes { get; set; }
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
         {

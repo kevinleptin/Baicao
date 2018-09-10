@@ -230,9 +230,15 @@
     <Compile Include="Migrations\201809090231131_redem.Designer.cs">
       <DependentUpon>201809090231131_redem.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201809100303145_gencouponcode.cs" />
+    <Compile Include="Migrations\201809100303145_gencouponcode.Designer.cs">
+      <DependentUpon>201809100303145_gencouponcode.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Consumer.cs" />
+    <Compile Include="Models\CouponCode.cs" />
+    <Compile Include="Models\DadaCode.cs" />
     <Compile Include="Models\Dealer.cs" />
     <Compile Include="Models\dto\ApiResult.cs" />
     <Compile Include="Models\dto\IsJoinedResult.cs" />
@@ -275,7 +281,9 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="AppSettings.config" />
+    <Content Include="AppSettings.config">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
@@ -347,6 +355,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201809090231131_redem.resx">
       <DependentUpon>201809090231131_redem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201809100303145_gencouponcode.resx">
+      <DependentUpon>201809100303145_gencouponcode.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -27,14 +27,26 @@
     </div>
     <div class="row">
         <button class="btn btn-primary" id="btnMatch">搭在一起</button>
+        
+    </div>
+    <div class="row">
+        <button class="btn btn-primary" id="btnGenCode">生成数据</button>
     </div>
 </div>
 <script>
+    $('#btnGenCode').click(function() {
+        $.post({
+            url: '/api/util/gencode',
+            success: function(rlt) {
+                console.log(rlt);
+            }
+        });
+    });
     $(document).ready(function () {
         var hostUrl = 'http://localhost:55397';
         var vm = {
             openid: 'mytestopenid'
-            };
+        };
         $.post({
             url: '/api/consumer/info',
             data: vm,

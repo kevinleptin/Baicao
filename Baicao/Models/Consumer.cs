@@ -25,6 +25,7 @@ namespace Baicao.Models
         public DateTime Regdate { get; set; }
         [MaxLength(32)]
         public string Couponcode { get; set; }
+
         public DateTime Updatetime { get; set; }
         [MaxLength(32)]
         public string Userip { get; set; }
@@ -34,6 +35,8 @@ namespace Baicao.Models
             get;
             set;
         }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int CodeId { get; set; }
 
     }
 }

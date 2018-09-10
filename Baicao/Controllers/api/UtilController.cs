@@ -94,5 +94,100 @@ namespace Baicao.Controllers.api
             }
             return response;
         }
+
+        [HttpPost, Route("api/util/gencode")]
+        public IHttpActionResult GenerateCode()
+        {
+            
+                
+            int cnt = int.Parse(ConfigurationManager.AppSettings["countGenerateCode"]);
+            int maxTrialCnt = 3;
+            // coupon code
+            for (int i = 0; i < cnt; i++)
+            {
+                
+                int currentTrialCount = 0;
+                while (currentTrialCount < maxTrialCnt)
+                {
+                    string couponCode = GetCode(7, 26);
+                    try
+                    {
+                       var cpCode = _context.CouponCodes.FirstOrDefault(c => c.Code == couponCode);
+                        if (cpCode != null)
+                        {
+                            continue;
+                        }
+
+                        _context.CouponCodes.Add(new CouponCode()
+                        {
+                            Code = couponCode
+                        });
+                        _context.SaveChanges();
+                        break;
+                    }
+                    catch
+                    {
+                        currentTrialCount++;
+                    }
+                }
+            }
+
+            // dada code
+            for (int j = 0; j < cnt; j++)
+            {
+                int currentTrialCount = 0;
+                while (currentTrialCount < maxTrialCnt)
+                {
+                    string dadaCode = GetCode(6, 36);
+                    try
+                    {
+                        var cpCode = _context.DadaCodes.FirstOrDefault(c => c.Code == dadaCode);
+                        if (cpCode != null)
+                        {
+                            continue;
+                        }
+
+                        _context.DadaCodes.Add(new DadaCode()
+                        {
+                            Code = dadaCode
+                        });
+                        _context.SaveChanges();
+                        break;
+                    }
+                    catch
+                    {
+                        currentTrialCount++;
+                    }
+                }
+            }
+
+            return Ok(new ApiResult()
+            {
+                Msg = "生成了" + cnt + "条数据"
+            });
+        }
+
+        string GetCode(int bitWidth, int maxIdxExclusive)
+        {
+            List<string> dictAlpha = new List<string>()
+            {
+                "A", "B","C","D","E","F",
+                "G", "H","I","J","K","L",
+                "M", "N","O","P","Q","R",
+                "S", "T","U","V","W","X",
+                "Y", "Z",
+                "0","1","2","3","4","5",
+                "6","7","8","9"
+            };
+            string code = string.Empty;
+            Random rnd = new Random();
+            for (int i = 0; i < bitWidth; i++)
+            {
+                var rndIdx = rnd.Next(0, maxIdxExclusive);
+                code += dictAlpha[rndIdx];
+            }
+
+            return code;
+        }
     }
 }
