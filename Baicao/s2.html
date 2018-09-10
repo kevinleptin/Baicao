@@ -10,6 +10,7 @@
     <!-- Latest compiled and minified JavaScript -->
     <script src="/Scripts/jquery-3.3.1.js"></script>
     <script src="/Scripts/qrcode.min.js"></script>
+    <script src="/Scripts/js.cookie-2.2.0.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 </head>
@@ -23,10 +24,10 @@
         你的专属搭搭码
     </div>
     <div class="row">
-        <span id="dadacode">123</span>
+        <span id="dadacode">测试中</span>
     </div>
     <div class="row">
-        <button class="btn btn-primary" id="btnMatch">搭在一起</button>
+        <a href="/s3.html" class="btn btn-primary" id="btnMatch">搭在一起</a>
         
     </div>
     <div class="row">
@@ -43,7 +44,7 @@
         });
     });
     $(document).ready(function () {
-        var hostUrl = 'http://localhost:55397';
+        var hostUrl = location.origin;
         var vm = {
             openid: Cookies.get("openid")
         };
