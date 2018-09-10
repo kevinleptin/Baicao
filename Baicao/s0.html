@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="/Scripts/jquery-3.3.1.js"></script>
+    <script src="/Scripts/js.cookie-2.2.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+</head>
+<body>
+<script>
+    var hostRootUrl = "http://localhost:55397";
+    var wxAuthUrl = "http://wxauth.net";
+    $(function () {
+
+        var url = new URL(document.URL);
+        var from = url.searchParams.get("from");
+        if (from) {
+            Cookies.set("sharefrom", from);
+            console.log(Cookies.get("sharefrom"));
+        }
+
+        var openId = Cookies.get("openid");
+
+        if (openId) {
+            checkIfJoined();
+        } else {
+            var hey_a = url.searchParams.get("hey_a") || Cookies.get("hey_a");
+            var hey_b = url.searchParams.get("hey_b") || Cookies.get("hey_b");
+            var hey_c = url.searchParams.get("hey_c") || Cookies.get("hey_c");
+
+            Cookies.set("hey_a", hey_a);
+            Cookies.set("hey_b", hey_b);
+            Cookies.set("hey_c", hey_c);
+
+            if (!hey_a || !hey_b || !hey_c) {
+                // 还未进行微信验证
+                var authUrl = wxAuthUrl + '/?sop=u&buri=' + encodeURIComponent(document.URL);
+                window.location.replace(authUrl);
+            }
+
+            var userApiUrl = wxAuthUrl + '/sns/userinfo/index.aspx';
+            userApiUrl += '?hey_a=' + hey_a;
+            userApiUrl += '&hey_b=' + hey_b;
+            userApiUrl += '&hey_c=' + hey_c;
+
+            $.get({
+                url: userApiUrl,
+                success: function(rlt) {
+                    console.log(rlt);
+                    var openId = rlt.userinfo[0].openid;
+                    Cookies.set("openid", openId);
+                    checkIfJoined();
+                }
+            });
+        }
+    });
+
+    function checkIfJoined() {
+        var vm = {
+            openId: Cookies.get("openid")
+        };
+        $.post({
+            url: '/api/consumer/userauth',
+            data: vm,
+            success: function (result) {
+                var isJoined = result.isJoined;
+                var isFromShare = (Cookies.get("sharefrom") != null);
+                navigateToProperPage(isJoined, isFromShare);
+            }
+        });
+    }
+
+    function navigateToProperPage(isJoined, isFromShare) {
+        if (isJoined) {
+            if (isFromShare) {
+                window.location.replace(hostRootUrl + "/s3.html");
+            } else {
+                window.location.replace(hostRootUrl + "/s2.html");
+            }
+        } else {
+            window.location.replace(hostRootUrl + "/index.html");
+        }
+    }
+</script>
+</body>
+</html>

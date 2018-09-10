@@ -20,34 +20,5 @@
         <a href="/s1.html" class="btn btn-primary">免费领取</a>
     </div>
 </div>
-<script>
-    $(document).ready(function () {
-        var vm = {
-            openId: "mytestopenid1",
-            nickName: "nico",
-            headImgUrl: "there"
-        };
-
-        var url = new URL(document.URL);
-        var from = url.searchParams.get("from");
-        if (from) {
-            Cookies.set("sharefrom", from);
-            console.log(Cookies.get("sharefrom"));
-        }
-        $.post({
-            url: '/api/consumer/userauth',
-            data: vm,
-            success: function(result) {
-                if (result.isJoined) {
-                    if (from) {
-                        window.location.replace("http://localhost:55397/s3.html");
-                    } else {
-                        window.location.replace("http://localhost:55397/s2.html");
-                    }
-                }
-            }
-        });
-    });
-</script>
 </body>
 </html>

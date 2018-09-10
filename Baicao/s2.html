@@ -45,7 +45,7 @@
     $(document).ready(function () {
         var hostUrl = 'http://localhost:55397';
         var vm = {
-            openid: 'mytestopenid'
+            openid: Cookies.get("openid")
         };
         $.post({
             url: '/api/consumer/info',

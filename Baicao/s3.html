@@ -29,7 +29,7 @@
     </div>
 </div>
 <script>
-    var openId = 'mytestopenid1';
+    var openId = Cookies.get("openid");
     $('#btnMatch').click(function () {
         var vm = {
             openId: openId,

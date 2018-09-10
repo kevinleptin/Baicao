@@ -33,9 +33,10 @@
     </div>
 </div>
 <script>
+    var openId = Cookies.get("openid");
     $('#btnGetVerifyCode').click(function () {
         var vm = {
-            openid: 'mytestopenid1',
+            openid: openId,
             mobiphone: $('#txtPhoneNumber').val()
         }
         $.post({
@@ -49,7 +50,7 @@
 
     $('#btnSubmit').click(function() {
         var vm = {
-            openid: 'mytestopenid1',
+            openid: openId,
             mobiphone: $('#txtPhoneNumber').val(),
             verifyCode: $('#txtVerifyCode').val()
         };
