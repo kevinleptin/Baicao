@@ -272,7 +272,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="index.html" />
+    <Content Include="indexH5.html" />
     <Content Include="redem.html" />
     <Content Include="s0.html" />
     <Content Include="s1.html" />
@@ -286,6 +286,7 @@
     <Content Include="AppSettings.config">
       <SubType>Designer</SubType>
     </Content>
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
