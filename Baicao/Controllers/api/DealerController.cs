@@ -17,6 +17,40 @@ namespace Baicao.Controllers.api
         {
                 _context = new ApplicationDbContext();
         }
+
+        [HttpPost, Route("api/dealer/redemInfo")]
+        public IHttpActionResult RedemInfo(RedemDto dto)
+        {
+            if (string.IsNullOrEmpty(dto.Couponcode))
+            {
+                return BadRequest();
+            }
+
+            string couponCode = dto.Couponcode;
+
+            var rlt = new RedemResult();
+            rlt.CouponCode = dto.Couponcode;
+            var redem = _context.Redems.FirstOrDefault(c => c.CouponCode == couponCode);
+            if (redem != null)
+            {
+                rlt.Code = 401;
+                rlt.RedemDate = redem.RedemDate;
+                rlt.RedemPerson = redem.RedemPerson;
+                rlt.RedemProduct = redem.RedemProduct;
+                rlt.RedemSource = redem.RedemSource;
+                rlt.Msg = "错误 - 此码已核销";
+                return Ok(rlt);
+            }
+            else
+            {
+                rlt.Code = 200;
+                rlt.Msg = "正常";
+            }
+
+            return Ok(rlt);
+        }
+
+
         [HttpPost, Route("api/dealer/redem")]
         public IHttpActionResult Redem(RedemDto dto)
         {

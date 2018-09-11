@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title></title>
+    <link rel="stylesheet" href="/Content/protoPage.css" />
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <!-- Optional theme -->
@@ -15,26 +16,62 @@
 
 </head>
 <body>
-<div class="container">
+<div class="container text-center">
     <div class="row">
-        <button class="btn btn-primary" id="btnRedem">核销二维码</button>
+        <input type="radio" name="product" checked="checked" value="原味" /> 原味
+        <input type="radio" name="product" value="青柠味" /> 青柠味
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <input type="text" id="txtRedemCode" class="form-control" placeholder="请输入密码"/>
+        </div>
+    </div>
+    <div class="row">
+        <button class="btn btn-primary" id="btnRedem">核销</button>
     </div>
 </div>
 <script>
-    $(function() {
-        $('#btnRedem').click(function () {
-            var vm = {
-                couponCode: "AZ1999",
-                redemCode: "1234",
-                product: "原味"
-            };
-            $.post({
-                url: '/api/dealer/redem',
-                data: vm,
-                success: function(rlt) {
+    $(function () {
+        var url = new URL(document.URL);
+        var couponCode = url.searchParams.get("couponcode");
+        //检测是否重复扫码
+        var vm = {
+            couponCode: couponCode
+        };
+        $.post({
+            url: '/api/dealer/redemInfo',
+            data: vm,
+            success: function(rlt) {
+                if (rlt.code != 200) {
+                    //已兑换，返回兑换信息提示
                     console.log(rlt);
+                    return;
+                } else {
+                    //TODO: 还未兑换，解禁radio group组件
                 }
-            });
+            }
+        });
+    });
+
+    $('#btnRedem').click(function () {
+        var url = new URL(document.URL);
+        var couponCode = url.searchParams.get("couponcode");
+        var vm = {
+            couponCode: couponCode,
+            redemCode: $('#txtRedemCode').val(),
+            product: $('input[type=radio]:checked')[0].value
+        };
+        $.post({
+            url: '/api/dealer/redem',
+            data: vm,
+            success: function(rlt) {
+                console.log(rlt);
+                if (rlt.code == 200) {
+                    //todo: 提示核销成功
+                } else {
+                    //todo: 提示出错信息
+                }
+            }
         });
     });
 </script>
