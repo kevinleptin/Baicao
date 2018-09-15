@@ -13,7 +13,7 @@
     <script src="/Scripts/jquery-3.3.1.js"></script>
     <script src="/Scripts/js.cookie-2.2.0.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-
+    <script src="/Scripts/bootbox.js"></script>
 </head>
 <body>
 <div class="container text-center">
@@ -44,7 +44,7 @@
             success: function(rlt) {
                 if (rlt.code != 200) {
                     //已兑换，返回兑换信息提示
-                    console.log(rlt);
+                    bootbox.alert(rlt.msg);
                     return;
                 } else {
                     //TODO: 还未兑换，解禁radio group组件
@@ -67,9 +67,9 @@
             success: function(rlt) {
                 console.log(rlt);
                 if (rlt.code == 200) {
-                    //todo: 提示核销成功
+                    bootbox.alert('核销成功');
                 } else {
-                    //todo: 提示出错信息
+                    bootbox.alert(rlt.msg);
                 }
             }
         });

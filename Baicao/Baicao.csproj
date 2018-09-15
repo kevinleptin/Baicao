@@ -278,6 +278,8 @@
     <Content Include="s1.html" />
     <Content Include="s2.html" />
     <Content Include="s3.html" />
+    <Content Include="Scripts\bootbox.js" />
+    <Content Include="Scripts\bootbox.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ApplicationInsights.config">

@@ -77,6 +77,7 @@ namespace Baicao.Controllers.api
                     catch(Exception e)
                     {
                         trans.Rollback();
+                        //TODO: 返回错误 code 500 记录日志
                     }
                 }
             }
