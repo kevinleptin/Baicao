@@ -7,6 +7,7 @@ using System.Web.Http;
 using Baicao.Models;
 using Baicao.Models.dto;
 using System.Data.Entity;
+using System.Web;
 
 namespace Baicao.Controllers.api
 {
@@ -60,8 +61,8 @@ namespace Baicao.Controllers.api
                     {
                         wxUserInfo = new WxUserInfo();
                         wxUserInfo.Openid = dto.OpenId;
-                        wxUserInfo.HeadImgUrl = dto.HeadImgUrl;
-                        wxUserInfo.NickName = dto.NickName;
+                        wxUserInfo.HeadImgUrl = HttpUtility.UrlDecode(dto.HeadImgUrl);
+                        wxUserInfo.NickName = HttpUtility.UrlDecode(dto.NickName);
 
                         var consumer = new Consumer();
                         consumer.Openid = dto.OpenId;

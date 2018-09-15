@@ -16,7 +16,9 @@
 
 </head>
 <body>
-
+<div class="container" id="mainbox">
+   
+</div>
 </body>
 
 <script>
@@ -27,6 +29,13 @@
             data: vm,
             success: function(data) {
                 console.log(data);
+                var template =
+                    "<div class=\"row\"><img src=\"{#img}\" /> <span>{#name}</span> <span> type: {#type} <span>";
+                data.list.forEach(function (item) {
+                    var htmlstr = template.replace('{#img}', item.headImgUrl).replace('{#name}', item.nickName)
+                        .replace('{#type}', item.matchType);
+                    $('#mainbox').append(htmlstr);
+                });
             }
         });
     });

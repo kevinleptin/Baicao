@@ -15,7 +15,7 @@
 
 </head>
 <body>
-<script>
+    <script>
     var hostRootUrl = location.origin;
     var wxAuthUrl = "http://wxauth..net";
     $(function () {
@@ -30,7 +30,7 @@
         var openId = Cookies.get("openid");
 
         if (openId) {
-            checkIfJoined();
+            checkIfJoined(null, null);
         } else {
             var hey_a = url.searchParams.get("hey_a") || Cookies.get("hey_a");
             var hey_b = url.searchParams.get("hey_b") || Cookies.get("hey_b");
@@ -56,16 +56,21 @@
                 success: function(rlt) {
                     console.log(rlt);
                     var openId = rlt.userinfo[0].openid;
+                    var nickName = encodeURIComponent(rlt.userinfo[0].nickname);
+                    var headImgUrl = encodeURIComponent(rlt.userinfo[0].headimgurl);
                     Cookies.set("openid", openId);
-                    checkIfJoined();
+                    checkIfJoined(nickName, headImgUrl);
                 }
             });
         }
     });
 
-    function checkIfJoined() {
+    function checkIfJoined(nickName, headImgUrl) {
         var vm = {
-            openId: Cookies.get("openid")
+            openId: Cookies.get("openid"),
+            nickName: nickName,
+            headImgUrl: headImgUrl
+
         };
         $.post({
             url: '/api/consumer/userauth',
@@ -89,6 +94,6 @@
             window.location.replace(hostRootUrl + "/indexH5.html");
         }
     }
-</script>
+    </script>
 </body>
 </html>
