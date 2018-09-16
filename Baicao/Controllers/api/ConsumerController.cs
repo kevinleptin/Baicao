@@ -192,6 +192,13 @@ namespace Baicao.Controllers.api
                 return Ok(rlt);
             }
 
+            if (otherCsm.Openid.Equals(dto.openid, StringComparison.OrdinalIgnoreCase))
+            {
+                rlt.Code = 402;
+                rlt.Msg = "拼搭失败 - 不能拼搭自己";
+                return Ok(rlt);
+            }
+
             var invition = _context.Invitions.FirstOrDefault(c => c.ConsumerOpenid == dto.openid && c.InvOpenid == otherCsm.Openid);
             if(invition != null) {
                 rlt.Code = 401;
