@@ -5,6 +5,7 @@ using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using Baicao.Models;
+using System.Data.Entity;
 
 namespace Baicao.Controllers
 {
@@ -52,6 +53,79 @@ namespace Baicao.Controllers
                 strRows.AppendLine(string.Format(rowFormat,
                     item.Openid, item.Mobilephone, item.Updatetime.ToString("yyyy-MM-dd HH:mm:ss"),
                     item.Couponcode, item.Updatetime.ToString("yyyy-MM-dd HH:mm:ss")));
+            }
+            var result = strRows.ToString();
+
+            //生成字节数组
+            var fileContents = Encoding.UTF8.GetBytes(result);
+            //设置excel保存到服务器的路径 
+            var filePath = Server.MapPath("~/excel/" + fileName + ".csv");
+            //保存excel到指定路径
+            System.IO.File.WriteAllBytes(filePath, fileContents);
+            // FileManager.WriteBuffToFile(fileContents, filePath);
+            //读取已有的excel文件输出到客户端供客户下载该excel文件
+            return File(filePath, "text/csv", fileName + ".csv");
+        }
+
+        public FileResult ExpInvitation(string token)
+        {
+            if (string.IsNullOrEmpty(token) || token != "meoexport")
+            {
+                return File(Encoding.UTF8.GetBytes("未授权"), "plain/text");
+            }
+            // https://blog.csdn.net/sxf359/article/details/72729870 
+            var list = new List<Invition>();
+            using (ApplicationDbContext _context = new ApplicationDbContext())
+            {
+                list = _context.Invitions.ToList();
+            }
+
+            var fileName = "Invitation" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss-fff");
+            var strRows = new StringBuilder();
+            strRows.AppendLine("consumeropenid,invopenid,invdate,matchtype,iftmall,tmalldate,updatetime");
+            string rowFormat = "{0},{1},{2},{3},{4},{5},{6}";
+            foreach (var item in list)
+            {
+                strRows.AppendLine(string.Format(rowFormat,
+                    item.ConsumerOpenid, item.InvOpenid, item.Updatetime.ToString("yyyy-MM-dd HH:mm:ss"),
+                    item.MatchType, true, item.Updatetime.ToString("yyyy-MM-dd HH:mm:ss"),
+                    item.Updatetime.ToString("yyyy-MM-dd HH:mm:ss")));
+            }
+            var result = strRows.ToString();
+
+            //生成字节数组
+            var fileContents = Encoding.UTF8.GetBytes(result);
+            //设置excel保存到服务器的路径 
+            var filePath = Server.MapPath("~/excel/" + fileName + ".csv");
+            //保存excel到指定路径
+            System.IO.File.WriteAllBytes(filePath, fileContents);
+            // FileManager.WriteBuffToFile(fileContents, filePath);
+            //读取已有的excel文件输出到客户端供客户下载该excel文件
+            return File(filePath, "text/csv", fileName + ".csv");
+        }
+
+        public FileResult ExpRedem(string token)
+        {
+            if (string.IsNullOrEmpty(token) || token != "meoexport")
+            {
+                return File(Encoding.UTF8.GetBytes("未授权"), "plain/text");
+            }
+            // https://blog.csdn.net/sxf359/article/details/72729870 
+            var list = new List<Redem>();
+            using (ApplicationDbContext _context = new ApplicationDbContext())
+            {
+                list = _context.Redems.ToList();
+            }
+
+            var fileName = "Redem" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss-fff");
+            var strRows = new StringBuilder();
+            strRows.AppendLine("couponcode,redemdate,redemsource,redemperson,redemcode,redemproduct,updatetime");
+            string rowFormat = "{0},{1},{2},{3},{4},{5},{6}";
+            foreach (var item in list)
+            {
+                strRows.AppendLine(string.Format(rowFormat,
+                    item.CouponCode, item.RedemDate.ToString("yyyy-MM-dd HH:mm:ss"), item.RedemSource,
+                    item.RedemPerson, item.RedemCode, item.RedemProduct, item.UpdateTime.ToString("yyyy-MM-dd HH:mm:ss")));
             }
             var result = strRows.ToString();
 
