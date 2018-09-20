@@ -43,6 +43,8 @@ namespace Baicao.Controllers.api
                 rlt.Code = 200;
                 rlt.IsJoined = true;
                 rlt.Msg = "用户已验证手机号码";
+                rlt.Couponcode = consumer.Couponcode;
+                rlt.Dadacode = consumer.Dadacode;
             }
 
             return Ok(rlt);
@@ -183,7 +185,7 @@ namespace Baicao.Controllers.api
 
         [HttpPost, Route("api/consumer/match")]
         public IHttpActionResult Match(matchdto dto) {
-            ApiResult rlt = new ApiResult();
+            MatchResult rlt = new MatchResult();
             var csm = _context.Consumers.Single(c => c.Openid == dto.openid);
             var otherCsm = _context.Consumers.SingleOrDefault(c => c.Dadacode == dto.dadacode);
             if(otherCsm == null) {
@@ -217,6 +219,7 @@ namespace Baicao.Controllers.api
             _context.SaveChanges();
             rlt.Code = 200;
             rlt.Msg = "拼搭成功";
+            rlt.MatchType = invition.MatchType;
             return Ok(rlt);
         }
 

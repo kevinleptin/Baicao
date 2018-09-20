@@ -242,6 +242,7 @@
     <Compile Include="Models\Dealer.cs" />
     <Compile Include="Models\dto\ApiResult.cs" />
     <Compile Include="Models\dto\IsJoinedResult.cs" />
+    <Compile Include="Models\dto\MatchResult.cs" />
     <Compile Include="Models\dto\RedemDto.cs" />
     <Compile Include="Models\dto\RedemResult.cs" />
     <Compile Include="Models\dto\SmsCodeDto.cs" />
