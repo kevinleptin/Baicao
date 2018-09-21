@@ -201,6 +201,7 @@ namespace Baicao.Controllers.api
                 return Ok(rlt);
             }
 
+            //TODO: 两人不能交叉拼搭
             var invition = _context.Invitions.FirstOrDefault(c => c.ConsumerOpenid == dto.openid && c.InvOpenid == otherCsm.Openid);
             if(invition != null) {
                 rlt.Code = 401;
