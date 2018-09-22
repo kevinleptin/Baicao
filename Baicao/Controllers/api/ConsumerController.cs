@@ -54,6 +54,13 @@ namespace Baicao.Controllers.api
         public IHttpActionResult UserAuth(WxUserInfoDto dto)
         {
             IsJoinedResult rlt = new IsJoinedResult();
+            if (dto == null || dto.OpenId == null)
+            {
+                rlt.IsJoined = false;
+                rlt.Code = 410;
+                rlt.Msg = "参数错误";
+                return Ok(rlt);
+            }
             var wxUserInfo = _context.WxUserInfos.FirstOrDefault(c => c.Openid == dto.OpenId);
             if (wxUserInfo == null)
             {
@@ -201,8 +208,11 @@ namespace Baicao.Controllers.api
                 return Ok(rlt);
             }
 
-            //TODO: 两人不能交叉拼搭
-            var invition = _context.Invitions.FirstOrDefault(c => c.ConsumerOpenid == dto.openid && c.InvOpenid == otherCsm.Openid);
+            //fix: 两人不能交叉拼搭
+            var invition = _context.Invitions
+                .FirstOrDefault(c => 
+                    (c.ConsumerOpenid == dto.openid && c.InvOpenid == otherCsm.Openid) ||
+                    (c.ConsumerOpenid == otherCsm.Openid && c.InvOpenid == dto.openid));
             if(invition != null) {
                 rlt.Code = 401;
                 rlt.Msg = "重复拼搭";

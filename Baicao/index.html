@@ -17,7 +17,6 @@
 <body>
     <script>
     var hostRootUrl = location.origin;
-    var wxAuthUrl = "http://wxauth..net";
     $(function () {
 
         var url = new URL(document.URL);
@@ -27,41 +26,16 @@
             console.log(Cookies.get("sharefrom"));
         }
 
-        var openId = Cookies.get("openid");
+        var openId = Cookies.get("openid") || url.searchParams.get("openid");
+        console.log("openid is ... ");
+        console.log(openId);
 
         if (openId) {
+            Cookies.set("openid", decodeURIComponent(openId));
             checkIfJoined(null, null);
         } else {
-            var hey_a = url.searchParams.get("hey_a") || Cookies.get("hey_a");
-            var hey_b = url.searchParams.get("hey_b") || Cookies.get("hey_b");
-            var hey_c = url.searchParams.get("hey_c") || Cookies.get("hey_c");
-
-            Cookies.set("hey_a", hey_a);
-            Cookies.set("hey_b", hey_b);
-            Cookies.set("hey_c", hey_c);
-
-            if (!hey_a || !hey_b || !hey_c) {
-                // 还未进行微信验证
-                var authUrl = wxAuthUrl + '/?sop=u&buri=' + encodeURIComponent(document.URL);
-                window.location.replace(authUrl);
-            }
-
-            var userApiUrl = wxAuthUrl + '/sns/userinfo/index.aspx';
-            userApiUrl += '?hey_a=' + hey_a;
-            userApiUrl += '&hey_b=' + hey_b;
-            userApiUrl += '&hey_c=' + hey_c;
-
-            $.get({
-                url: userApiUrl,
-                success: function(rlt) {
-                    console.log(rlt);
-                    var openId = rlt.userinfo[0].openid;
-                    var nickName = encodeURIComponent(rlt.userinfo[0].nickname);
-                    var headImgUrl = encodeURIComponent(rlt.userinfo[0].headimgurl);
-                    Cookies.set("openid", openId);
-                    checkIfJoined(nickName, headImgUrl);
-                }
-            });
+            var authUrl = hostRootUrl + '/OAuth/Login?returnUrl=' + encodeURIComponent(document.URL);
+            window.location.replace(authUrl);
         }
     });
 

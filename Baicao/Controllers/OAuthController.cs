@@ -24,10 +24,10 @@ namespace Baicao.Controllers
             _context = new ApplicationDbContext();
         }
 
-        public ActionResult Login()
+        public ActionResult Login(string returnUrl)
         {
             var urlData = System.Web.HttpContext.Current.Request.Url;
-            var returnUrl = urlData.ToString(); //todo: 这里是外面传来的URL值
+            returnUrl = System.Web.HttpUtility.UrlDecode(returnUrl);
             var _oauthCallbackUrl = "/OAuth/OAuthUserInfoCallBack";
             //授权回调字符串
             var callbackUrl = string.Format("{0}://{1}{2}{3}returnUrl={4}",
@@ -51,13 +51,6 @@ namespace Baicao.Controllers
                 return Content("您拒绝了授权！");
             }
 
-            //if (!state.Contains("|"))
-            //{
-            //    //这里的state其实是会暴露给客户端的，验证能力很弱，这里只是演示一下
-            //    //实际上可以存任何想传递的数据，比如用户ID
-            //    return Content("验证失败！请从正规途径进入！1001");
-            //}
-
             //通过，用code换取access_token
             var userInfoAccessToken = OAuthApi.GetAccessToken(_appId, _appSecret, code);
             if (userInfoAccessToken.errcode != ReturnCode.请求成功)
@@ -66,14 +59,16 @@ namespace Baicao.Controllers
             }
 
             WxUserInfo wxUser = _context.WxUserInfos.FirstOrDefault(c => c.Openid == userInfoAccessToken.openid);
-            //TODO: return URL应该追加上 openid，这样前端直接使用
-
+            //return URL应该追加上 openid，这样前端直接使用
+            string openId = string.Empty;
             if (wxUser != null)
             {
+                openId = System.Web.HttpUtility.UrlEncode(wxUser.Openid);
+                returnUrl += (returnUrl.Contains("?") ? "&openid=" + openId : "?openid=" + openId);
                 return Redirect(returnUrl);
             }
 
-            var wxUserInfo = CommonApi.GetUserInfo(_appId, userInfoAccessToken.openid);
+            // var wxUserInfo = CommonApi.GetUserInfo(_appId, userInfoAccessToken.openid);
             var userInfo = OAuthApi.GetUserInfo(userInfoAccessToken.access_token, userInfoAccessToken.openid);
 
             //把获取到的userInfo存储到数据库中
@@ -91,10 +86,26 @@ namespace Baicao.Controllers
                 //UnionId = userInfo.unionid,
                 //Subscribe = wxUserInfo.subscribe
             };
-            
-            _context.WxUserInfos.Add(uInfo);
-            _context.SaveChanges();
+            var consumer = new Consumer();
+            consumer.Openid = uInfo.Openid;
 
+            using (var trans = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    _context.WxUserInfos.Add(uInfo);
+                    _context.Consumers.Add(consumer);
+                    _context.SaveChanges();
+                    trans.Commit();
+                }
+                catch
+                {
+                    trans.Rollback();
+                }
+            }
+
+            openId = System.Web.HttpUtility.UrlEncode(uInfo.Openid);
+            returnUrl += (returnUrl.Contains("?") ? "&openid=" + openId : "?openid=" + openId);
             return Redirect(returnUrl);
         }
     }
