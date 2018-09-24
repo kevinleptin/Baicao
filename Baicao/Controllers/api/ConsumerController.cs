@@ -50,6 +50,40 @@ namespace Baicao.Controllers.api
             return Ok(rlt);
         }
 
+        [HttpPost, Route("api/consumer/clear")]
+        public IHttpActionResult Clear()
+        {
+            ApiResult rlt = new ApiResult();
+            DateTime dt = new DateTime(2018,10,8);
+            if (DateTime.Now < dt)
+            {
+                using (var trans = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        _context.Database.ExecuteSqlCommand("truncate table consumers");
+                        _context.Database.ExecuteSqlCommand("truncate table invitions");
+                        _context.Database.ExecuteSqlCommand("delete from Redems");
+                        _context.Database.ExecuteSqlCommand("delete from WxUserInfoes");
+                        rlt.Msg = "服务端数据清理成功";
+                        trans.Commit();
+                    }
+                    catch
+                    {
+                        rlt.Msg = "服务端数据清理失败 - 发生错误";
+                        trans.Rollback();
+                    }
+                }
+                //able to clear
+            }
+            else
+            {
+                rlt.Msg = "无效的调用";
+            }
+
+            return Ok(rlt);
+        }
+
         [HttpPost, Route("api/consumer/userauth")]
         public IHttpActionResult UserAuth(WxUserInfoDto dto)
         {

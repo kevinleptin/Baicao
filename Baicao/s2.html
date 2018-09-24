@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>二维码展示页面</title>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
     <link rel="stylesheet" href="/Content/protoPage.css" />
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -14,6 +15,7 @@
     <script src="/Scripts/qrcode.min.js"></script>
     <script src="/Scripts/js.cookie-2.2.0.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="/Scripts/bootbox.js"></script>
     <style type="text/css">
         #qrcode * {
             margin: 0px auto;
@@ -59,11 +61,52 @@
             url: '/api/consumer/info',
             data: vm,
             success: function (data) {
+                var dadacode = data.dadacode;
                 $('#dadacode').text(data.dadacode);
                 new QRCode(document.getElementById("qrcode"),
                     hostUrl + "/redem.html?couponcode=" + data.couponcode);
+
+                wx.ready(function() {
+                    wx.updateTimelineShareData({ 
+                        title: '和我一起羞搭搭', // 分享标题
+                        link: hostUrl+'/index.html?from=' + dadacode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                        imgUrl: hostUrl + '/Content/share.png' // 分享图标
+                    }, function(res) { 
+
+                        }); 
+
+                    wx.updateAppMessageShareData({ 
+                        title: '和我一起羞搭搭', // 分享标题
+                        desc: '免费领取SILK礼品', // 分享描述
+                        link: hostUrl + '/index.html?from=' + dadacode, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                        imgUrl: hostUrl + '/Content/share.png' // 分享图标
+                    }, function (res) { 
+
+                    }); 
+                });
             }
         });
+
+        $.get({
+            url: 'https://api.heymeo.net/data/api.aspx?type=signature&weixinidx=1',
+            success: function (rlt) {
+                var data = JSON.parse(rlt);
+                console.log(data);
+
+                wx.config({
+                    debug: false,
+                    appId: data.appid,
+                    timestamp: data.timestamp,
+                    nonceStr: data.nonceStr,
+                    signature: data.signature,
+                    jsApiList: ['updateAppMessageShareData', 'updateTimelineShareData'] // 必填，需要使用的JS接口列表
+                });
+
+            }
+        });
+
+        
+
     });
 </script>
 </body>
