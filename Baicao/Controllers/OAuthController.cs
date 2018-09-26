@@ -36,7 +36,7 @@ namespace Baicao.Controllers
                 //urlData.Port != 80 ? (":" + urlData.Port) : "",
                 _oauthCallbackUrl,
                 _oauthCallbackUrl.Contains("?") ? "&" : "?",
-                System.Web.HttpUtility.UrlEncode(returnUrl)
+                System.Web.HttpUtility.UrlEncode(returnUrl).Replace("+", "%20")
             );
 
             var state = string.Format("{0}|{1}", "FromMeo", DateTime.Now.Ticks);
@@ -61,10 +61,15 @@ namespace Baicao.Controllers
             WxUserInfo wxUser = _context.WxUserInfos.FirstOrDefault(c => c.Openid == userInfoAccessToken.openid);
             //return URL应该追加上 openid，这样前端直接使用
             string openId = string.Empty;
+            string imgUrl = string.Empty;
+            string nickName = String.Empty;
             if (wxUser != null)
             {
-                openId = System.Web.HttpUtility.UrlEncode(wxUser.Openid);
+                openId = System.Web.HttpUtility.UrlEncode(wxUser.Openid).Replace("+","%20");
+                imgUrl = System.Web.HttpUtility.UrlEncode(wxUser.HeadImgUrl ?? "").Replace("+", "%20");
+                nickName = System.Web.HttpUtility.UrlEncode(wxUser.NickName ?? "").Replace("+", "%20");
                 returnUrl += (returnUrl.Contains("?") ? "&openid=" + openId : "?openid=" + openId);
+                returnUrl += "&h=" + imgUrl + "&n=" + nickName;
                 return Redirect(returnUrl);
             }
 
@@ -104,8 +109,11 @@ namespace Baicao.Controllers
                 }
             }
 
-            openId = System.Web.HttpUtility.UrlEncode(uInfo.Openid);
+            openId = System.Web.HttpUtility.UrlEncode(uInfo.Openid).Replace("+", "%20");
+            imgUrl = System.Web.HttpUtility.UrlEncode(uInfo.HeadImgUrl ?? "").Replace("+", "%20");
+            nickName = System.Web.HttpUtility.UrlEncode(uInfo.NickName ?? "").Replace("+", "%20");
             returnUrl += (returnUrl.Contains("?") ? "&openid=" + openId : "?openid=" + openId);
+            returnUrl += "&h=" + imgUrl + "&n=" + nickName;
             return Redirect(returnUrl);
         }
     }

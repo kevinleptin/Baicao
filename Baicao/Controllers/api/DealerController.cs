@@ -34,7 +34,7 @@ namespace Baicao.Controllers.api
             if (redem != null)
             {
                 rlt.Code = 401;
-                rlt.RedemDate = redem.RedemDate;
+                rlt.RedemDate = redem.RedemDate.ToString("yyyy-MM-dd HH:mm:ss");
                 rlt.RedemPerson = redem.RedemPerson;
                 rlt.RedemProduct = redem.RedemProduct;
                 rlt.RedemSource = redem.RedemSource;
@@ -65,11 +65,19 @@ namespace Baicao.Controllers.api
 
             var rlt = new RedemResult();
             rlt.CouponCode = dto.Couponcode;
+            var couponCodeEntity = _context.CouponCodes.FirstOrDefault(c => c.Code == couponCode);
+            if (couponCodeEntity == null)
+            {
+                rlt.Code = 406;
+                rlt.Msg = "错误 - 兑换码错误";
+                return Ok(rlt);
+            }
+
             var redem = _context.Redems.FirstOrDefault(c => c.CouponCode == couponCode);
             if (redem != null)
             {
                 rlt.Code = 401;
-                rlt.RedemDate = redem.RedemDate;
+                rlt.RedemDate = redem.RedemDate.ToString("yyyy-MM-dd HH:mm:ss");
                 rlt.RedemPerson = redem.RedemPerson;
                 rlt.RedemProduct = redem.RedemProduct;
                 rlt.RedemSource = redem.RedemSource;
@@ -98,7 +106,7 @@ namespace Baicao.Controllers.api
             _context.SaveChanges();
 
             rlt.Code = 200;
-            rlt.RedemDate = redem.RedemDate;
+            rlt.RedemDate = redem.RedemDate.ToString("yyyy-MM-dd HH:mm:ss");
             rlt.RedemPerson = redem.RedemPerson;
             rlt.RedemProduct = redem.RedemProduct;
             rlt.RedemSource = redem.RedemSource;
