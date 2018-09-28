@@ -259,3 +259,4 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/Baicao/excel/Redem2018-09-27-16-08-04-061.csv

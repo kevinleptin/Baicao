@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -12,16 +13,25 @@ using Aliyun.Acs.Core.Profile;
 using Aliyun.Acs.Dysmsapi.Model.V20170525;
 using Baicao.Models;
 using Baicao.Models.dto;
+using WebGrease.Css.Extensions;
 
 namespace Baicao.Controllers.api
 {
     public class UtilController : ApiController
     {
         private ApplicationDbContext _context = null;
+        private HashSet<string> lstCurrentCouponCode = null;
+        private HashSet<string> lstCurrentDadaCode = null;
+        private HashSet<string> lstNewAddCouponCode = null;
+        private HashSet<string> lstNewAddDadaCode = null;
 
         public UtilController()
         {
             _context = new ApplicationDbContext();
+            lstCurrentCouponCode = new HashSet<string>();
+            lstCurrentDadaCode = new HashSet<string>();
+            lstNewAddCouponCode = new HashSet<string>();
+            lstNewAddDadaCode = new HashSet<string>();
         }
 
         [HttpPost, Route("api/util/sendsms")]
@@ -95,11 +105,54 @@ namespace Baicao.Controllers.api
             return response;
         }
 
+        private bool IsDuplicateCouponByCache(string couponCode)
+        {
+            return lstCurrentCouponCode.Contains(couponCode);
+        }
+
+        private bool IsDuplicateDadaByCache(string dadaCode)
+        {
+            return lstCurrentDadaCode.Contains(dadaCode);
+        }
+
+        private void InitCache()
+        {
+            _context.CouponCodes.ForEach(c => { lstCurrentCouponCode.Add(c.Code); });
+            _context.DadaCodes.ForEach(c => { lstCurrentDadaCode.Add(c.Code); });
+        }
+
+        private void SaveCodes()
+        {
+            foreach (var couponCode in lstNewAddCouponCode)
+            {
+                _context.CouponCodes.Add(new CouponCode()
+                {
+                    Code = couponCode,
+                    CreateOn = DateTime.Now
+                });
+            }
+
+            foreach (var dadaCode in lstNewAddDadaCode)
+            {
+                _context.DadaCodes.Add(new DadaCode()
+                {
+                    CreateOn = DateTime.Now,
+                    Code = dadaCode
+                });
+            }
+
+            _context.SaveChanges();
+        }
+
         [HttpPost, Route("api/util/gencode")]
         public IHttpActionResult GenerateCode()
         {
-            
-                
+            //Stopwatch sw = Stopwatch.StartNew();
+            InitCache();
+
+            //Debug.Print("init cache seconds");
+            //Debug.Print(sw.Elapsed.Seconds.ToString());
+            //sw.Restart();
             int cnt = int.Parse(ConfigurationManager.AppSettings["countGenerateCode"]);
             int maxTrialCnt = 3;
             // coupon code
@@ -112,17 +165,13 @@ namespace Baicao.Controllers.api
                     string couponCode = GetCode(7, 26);
                     try
                     {
-                       var cpCode = _context.CouponCodes.FirstOrDefault(c => c.Code == couponCode);
-                        if (cpCode != null)
+                        if (IsDuplicateCouponByCache(couponCode))
                         {
                             continue;
                         }
 
-                        _context.CouponCodes.Add(new CouponCode()
-                        {
-                            Code = couponCode
-                        });
-                        _context.SaveChanges();
+                        lstNewAddCouponCode.Add(couponCode);
+                        lstCurrentCouponCode.Add(couponCode);
                         break;
                     }
                     catch
@@ -131,6 +180,10 @@ namespace Baicao.Controllers.api
                     }
                 }
             }
+
+            //Debug.Print("finish coupon codes");
+            //Debug.Print(sw.Elapsed.Seconds.ToString());
+            //sw.Restart();
 
             // dada code
             for (int j = 0; j < cnt; j++)
@@ -141,17 +194,13 @@ namespace Baicao.Controllers.api
                     string dadaCode = GetCode(6, 36);
                     try
                     {
-                        var cpCode = _context.DadaCodes.FirstOrDefault(c => c.Code == dadaCode);
-                        if (cpCode != null)
+                        if (IsDuplicateDadaByCache(dadaCode))
                         {
                             continue;
                         }
 
-                        _context.DadaCodes.Add(new DadaCode()
-                        {
-                            Code = dadaCode
-                        });
-                        _context.SaveChanges();
+                        lstNewAddDadaCode.Add(dadaCode);
+                        lstCurrentDadaCode.Add(dadaCode);
                         break;
                     }
                     catch
@@ -160,6 +209,16 @@ namespace Baicao.Controllers.api
                     }
                 }
             }
+
+            //Debug.Print("finish dada codes");
+            //Debug.Print(sw.Elapsed.Seconds.ToString());
+            //sw.Restart();
+
+            SaveCodes();
+
+            //Debug.Print("finish save codes");
+            //Debug.Print(sw.Elapsed.Seconds.ToString());
+            //sw.Stop();
 
             return Ok(new ApiResult()
             {

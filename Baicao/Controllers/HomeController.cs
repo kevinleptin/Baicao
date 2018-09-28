@@ -41,7 +41,7 @@ namespace Baicao.Controllers
             var list = new List<Consumer>();
             using (ApplicationDbContext _context = new ApplicationDbContext())
             {
-                list = _context.Consumers.Where(c=>!string.IsNullOrEmpty(c.Mobilephone)).ToList();
+                list = _context.Consumers.Where(c=>!string.IsNullOrEmpty(c.Mobilephone)).OrderBy(c=>c.Regdate).ToList();
             }
             
             var fileName = "Consumer" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss-fff");
@@ -77,7 +77,7 @@ namespace Baicao.Controllers
             var list = new List<Invition>();
             using (ApplicationDbContext _context = new ApplicationDbContext())
             {
-                list = _context.Invitions.ToList();
+                list = _context.Invitions.OrderBy(c=>c.Invdate).ToList();
             }
 
             var fileName = "Invitation" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss-fff");
@@ -114,7 +114,7 @@ namespace Baicao.Controllers
             var list = new List<Redem>();
             using (ApplicationDbContext _context = new ApplicationDbContext())
             {
-                list = _context.Redems.ToList();
+                list = _context.Redems.OrderBy(c=>c.RedemDate).ToList();
             }
 
             var fileName = "Redem" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss-fff");
@@ -128,16 +128,27 @@ namespace Baicao.Controllers
                     item.RedemPerson, item.RedemCode, item.RedemProduct, item.UpdateTime.ToString("yyyy-MM-dd HH:mm:ss")));
             }
             var result = strRows.ToString();
-
+            
             //生成字节数组
             var fileContents = Encoding.UTF8.GetBytes(result);
             //设置excel保存到服务器的路径 
             var filePath = Server.MapPath("~/excel/" + fileName + ".csv");
             //保存excel到指定路径
-            System.IO.File.WriteAllBytes(filePath, fileContents);
+            System.IO.File.WriteAllBytes(filePath, appendBOM(fileContents));
             // FileManager.WriteBuffToFile(fileContents, filePath);
             //读取已有的excel文件输出到客户端供客户下载该excel文件
             return File(filePath, "text/csv", fileName + ".csv");
+        }
+
+        private byte[] appendBOM(byte[] bContent)
+        {
+            byte[] bBOM = new byte[] { 0xEF, 0xBB, 0xBF };
+            byte[] bToWrite = new byte[bBOM.Length + bContent.Length];
+
+            //combile the BOM and the content
+            bBOM.CopyTo(bToWrite, 0);
+            bContent.CopyTo(bToWrite, bBOM.Length);
+            return bToWrite;
         }
     }
 }
