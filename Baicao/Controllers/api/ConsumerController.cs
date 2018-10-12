@@ -32,8 +32,8 @@ namespace Baicao.Controllers.api
             }
 
             var consumer = _context.Consumers.FirstOrDefault(c => c.Openid == dto.Openid);
-            if (consumer == null || string.IsNullOrEmpty(consumer.Mobilephone))
-            {
+            if (consumer == null || string.IsNullOrEmpty(consumer.Couponcode))
+            {//没有赋值CODE，不能算参与成功
                 rlt.Code = 200;
                 rlt.IsJoined = false;
                 rlt.Msg = "用户还未验证手机号码";
@@ -50,36 +50,11 @@ namespace Baicao.Controllers.api
             return Ok(rlt);
         }
 
-        [HttpPost, Route("api/consumer/clear")]
+        [HttpPost, Route("api/consumer/fix")]
         public IHttpActionResult Clear()
         {
             ApiResult rlt = new ApiResult();
-            DateTime dt = new DateTime(2018,10,8);
-            if (DateTime.Now < dt)
-            {
-                using (var trans = _context.Database.BeginTransaction())
-                {
-                    try
-                    {
-                        _context.Database.ExecuteSqlCommand("truncate table consumers");
-                        _context.Database.ExecuteSqlCommand("truncate table invitions");
-                        _context.Database.ExecuteSqlCommand("delete from Redems");
-                        _context.Database.ExecuteSqlCommand("delete from WxUserInfoes");
-                        rlt.Msg = "服务端数据清理成功";
-                        trans.Commit();
-                    }
-                    catch
-                    {
-                        rlt.Msg = "服务端数据清理失败 - 发生错误";
-                        trans.Rollback();
-                    }
-                }
-                //able to clear
-            }
-            else
-            {
-                rlt.Msg = "无效的调用";
-            }
+            
 
             return Ok(rlt);
         }
@@ -176,8 +151,8 @@ namespace Baicao.Controllers.api
             }
 
             var csm = _context.Consumers.FirstOrDefault(c => c.Openid == dto.Openid);
-            if (!string.IsNullOrEmpty(csm.Mobilephone))
-            {
+            if (!string.IsNullOrEmpty(csm.Couponcode))
+            { //发现14例用户没有获取到CODE,改判断条件，让用户能重试.
                 rlt.Code = 402;
                 rlt.Msg = "重复参与";
                 return Ok(rlt);
@@ -196,8 +171,8 @@ namespace Baicao.Controllers.api
             string dadaCode = string.Empty;
             string couponCode = string.Empty;
 
-            var couponCodeEntity = _context.CouponCodes.Find(csm.CodeId);
-            var dadaCodeEntity = _context.DadaCodes.Find(csm.CodeId);
+            var couponCodeEntity = _context.CouponCodes.FirstOrDefault(c=>c.BakId == csm.CodeId);
+            var dadaCodeEntity = _context.DadaCodes.First(c=>c.BakId == csm.CodeId);
             rlt.Dadacode = dadaCodeEntity.Code;
             rlt.Couponcode = couponCodeEntity.Code;
 

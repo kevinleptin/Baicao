@@ -23,5 +23,7 @@ namespace Baicao.Models
         public string Code { get; set; }
 
         public DateTime CreateOn { get; set; }
+
+        public int BakId { get; set; }
     }
 }

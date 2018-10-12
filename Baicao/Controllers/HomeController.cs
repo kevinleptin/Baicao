@@ -52,7 +52,75 @@ namespace Baicao.Controllers
             {
                 strRows.AppendLine(string.Format(rowFormat,
                     item.Openid, item.Mobilephone, item.Updatetime.ToString("yyyy-MM-dd HH:mm:ss"),
-                    item.Couponcode, item.Updatetime.ToString("yyyy-MM-dd HH:mm:ss")));
+                    item.Couponcode, item.Regdate.ToString("yyyy-MM-dd HH:mm:ss")));
+            }
+            var result = strRows.ToString();
+
+            //生成字节数组
+            var fileContents = Encoding.UTF8.GetBytes(result);
+            //设置excel保存到服务器的路径 
+            var filePath = Server.MapPath("~/excel/" + fileName + ".csv");
+            //保存excel到指定路径
+            System.IO.File.WriteAllBytes(filePath, fileContents);
+            // FileManager.WriteBuffToFile(fileContents, filePath);
+            //读取已有的excel文件输出到客户端供客户下载该excel文件
+            return File(filePath, "text/csv", fileName + ".csv");
+        }
+
+        public ActionResult Fix()
+        {
+            try
+            {
+                ApplicationDbContext _context = new ApplicationDbContext();
+                int cntMax = 10;
+                int cntCurrent = 0;
+                while (cntCurrent < cntMax)
+                {
+                    var item = _context.Consumers.FirstOrDefault(c =>
+                        string.IsNullOrEmpty(c.Couponcode) && !string.IsNullOrEmpty(c.Mobilephone));
+                    if (item == null)
+                    {
+                        break;
+                    }
+                    var Id = item.CodeId;
+                    string couponCode = _context.CouponCodes.Find(Id).Code;
+                    string dadaCode = _context.DadaCodes.Find(Id).Code;
+                    item.Couponcode = couponCode;
+                    item.Dadacode = dadaCode;
+                    _context.SaveChanges();
+                    cntCurrent++;
+                }
+                return Content("Fix了" + cntCurrent + "条数据");
+            }
+            catch (Exception e)
+            {
+                return Content(e.ToString());
+            }
+
+        }
+
+        public FileResult ExpCode(string token)
+        {
+            if (string.IsNullOrEmpty(token) || token != "meoexport")
+            {
+                return File(Encoding.UTF8.GetBytes("未授权"), "plain/text");
+            }
+            // https://blog.csdn.net/sxf359/article/details/72729870 
+            var list = new List<Consumer>();
+            using (ApplicationDbContext _context = new ApplicationDbContext())
+            {
+                list = _context.Consumers.Where(c => !string.IsNullOrEmpty(c.Mobilephone)).OrderBy(c => c.Regdate).ToList();
+            }
+
+            var fileName = "Consumer" + DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss-fff");
+            var strRows = new StringBuilder();
+            strRows.AppendLine("Coupon code,Dada code,mobiphone,updatetime");
+            string rowFormat = "{0},{1},{2},{3}";
+            foreach (var item in list)
+            {
+                strRows.AppendLine(string.Format(rowFormat,
+                    item.Couponcode, item.Dadacode, item.Mobilephone,
+                    item.Regdate.ToString("yyyy-MM-dd HH:mm:ss")));
             }
             var result = strRows.ToString();
 

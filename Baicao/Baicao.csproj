@@ -253,6 +253,10 @@
     <Compile Include="Migrations\201809100303145_gencouponcode.Designer.cs">
       <DependentUpon>201809100303145_gencouponcode.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201810121248131_fixIdentityIssue.cs" />
+    <Compile Include="Migrations\201810121248131_fixIdentityIssue.Designer.cs">
+      <DependentUpon>201810121248131_fixIdentityIssue.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Consumer.cs" />
@@ -389,6 +393,9 @@
     <EmbeddedResource Include="Migrations\201809100303145_gencouponcode.resx">
       <DependentUpon>201809100303145_gencouponcode.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201810121248131_fixIdentityIssue.resx">
+      <DependentUpon>201810121248131_fixIdentityIssue.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -408,7 +415,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>55397</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://wx.pixiantong.com</IISUrl>
+          <IISUrl>http://localhost:55655</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
